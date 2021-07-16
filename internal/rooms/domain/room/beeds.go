@@ -41,6 +41,13 @@ type RoomBed struct {
 }
 
 func (b RoomBed) Capacity() int {
+	if b.bedType == DoubleBed {
+		return 2
+	}
+
+	if b.bedType == QueenBed {
+		return 2
+	}
 	return 1
 }
 
