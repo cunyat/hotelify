@@ -40,6 +40,13 @@ type RoomBed struct {
 	count   int
 }
 
+func NewRoomBed(bedType bedType, count int) RoomBed {
+	return RoomBed{
+		bedType: bedType,
+		count:   count,
+	}
+}
+
 func (b RoomBed) Capacity() int {
 	if b.bedType == DoubleBed {
 		return 2

@@ -1,28 +1,50 @@
 package domain
 
-type DomainEvent interface {
-	EventUUID() string
+import (
+	"context"
+	"time"
+
+	"github.com/google/uuid"
+)
+
+type EventType string
+
+type Event interface {
+	UUID() string
 	AggregateUUID() string
-	EventName() string
+	OccurredOn() time.Time
+	EventType() EventType
 }
 
-type AggregateRoot struct {
-	events []DomainEvent
-}
-
-func (a *AggregateRoot) Record(events ...DomainEvent) {
-	a.events = append(a.events, events...)
-}
-
-func (a *AggregateRoot) PullDomainEvents() []DomainEvent {
-	events := append([]DomainEvent{}, a.events...)
-	a.events = nil
-	return events
-}
-
-type EventHandler func(DomainEvent)
+type EventListener func(context.Context, Event) error
 
 type EventBus interface {
-	Publish([]DomainEvent)
-	RegisterHandler(string, EventHandler)
+	Subscribe(EventType, EventListener)
+	Publish(context.Context, Event) error
+}
+
+type BaseEvent struct {
+	eventUUID     string
+	aggregateUUID string
+	occurredOn    time.Time
+}
+
+func NewBaseEvent(aggregateUUID string) BaseEvent {
+	return BaseEvent{
+		eventUUID:     uuid.NewString(),
+		aggregateUUID: aggregateUUID,
+		occurredOn:    time.Now(),
+	}
+}
+
+func (b BaseEvent) UUID() string {
+	return b.eventUUID
+}
+
+func (b BaseEvent) OccurredOn() time.Time {
+	return b.occurredOn
+}
+
+func (b BaseEvent) AggregateUUID() string {
+	return b.aggregateUUID
 }

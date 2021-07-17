@@ -42,32 +42,6 @@ func CreateRoom(num string, floor int, beds []RoomBed, services []string) (Room,
 	return room, nil
 }
 
-type RoomCreated struct {
-	UUID      string
-	eventUUID string
-}
-
-var roomCreated domain.DomainEvent = RoomCreated{}
-
-func NewRoomCreated(uuid string) RoomCreated {
-	return RoomCreated{
-		UUID:      uuid,
-		eventUUID: uuidgen.NewString(),
-	}
-}
-
-func (rc RoomCreated) EventUUID() string {
-	return rc.eventUUID
-}
-
-func (rc RoomCreated) AggregateUUID() string {
-	return rc.UUID
-}
-
-func (rc RoomCreated) EventName() string {
-	return "rooms.room_created"
-}
-
 // UUID return room's uuid
 func (r Room) UUID() string {
 	return r.uuid
@@ -102,4 +76,30 @@ func (r Room) Beds() []RoomBed {
 // Services return room's services
 func (r Room) Services() []string {
 	return r.services
+}
+
+type RoomCreated struct {
+	UUID      string
+	eventUUID string
+}
+
+var roomCreated domain.DomainEvent = RoomCreated{}
+
+func NewRoomCreated(uuid string) RoomCreated {
+	return RoomCreated{
+		UUID:      uuid,
+		eventUUID: uuidgen.NewString(),
+	}
+}
+
+func (rc RoomCreated) EventUUID() string {
+	return rc.eventUUID
+}
+
+func (rc RoomCreated) AggregateUUID() string {
+	return rc.UUID
+}
+
+func (rc RoomCreated) EventName() string {
+	return "rooms.room_created"
 }
