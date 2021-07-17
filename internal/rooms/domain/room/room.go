@@ -3,7 +3,6 @@ package room
 import (
 	"errors"
 
-	"github.com/cunyat/hotelify/internal/common/domain"
 	uuidgen "github.com/google/uuid"
 )
 
@@ -14,7 +13,6 @@ type Room struct {
 	floor    int
 	beds     []RoomBed
 	services []string
-	domain.AggregateRoot
 }
 
 // NewRoom builds and returns a Room entity
@@ -82,8 +80,6 @@ type RoomCreated struct {
 	UUID      string
 	eventUUID string
 }
-
-var roomCreated domain.DomainEvent = RoomCreated{}
 
 func NewRoomCreated(uuid string) RoomCreated {
 	return RoomCreated{

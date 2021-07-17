@@ -10,10 +10,10 @@ import (
 )
 
 type RoomCommand struct {
-	num      string
-	floor    int
-	beds     map[string]int
-	services []string
+	Num      string
+	Floor    int
+	Beds     map[string]int
+	Services []string
 }
 
 const commandType domain.CommandType = "rooms.room.create"
@@ -31,23 +31,23 @@ func RoomCommandHandler(repo room.Repository) domain.CommandHandler {
 			return errors.New("unknown command")
 		}
 
-		var beds = make([]room.RoomBed, len(createCmd.beds))
+		var beds = make([]room.RoomBed, len(createCmd.Beds))
 
-		for key, count := range createCmd.beds {
+		for key, count := range createCmd.Beds {
 			bedType, err := room.NewBedTypeFromString(key)
 			if err != nil {
 				return err
 			}
 
 			bed := room.NewRoomBed(bedType, count)
-
 			beds = append(beds, bed)
 		}
+
 		room, err := room.CreateRoom(
-			createCmd.num,
-			createCmd.floor,
+			createCmd.Num,
+			createCmd.Floor,
 			beds,
-			createCmd.services,
+			createCmd.Services,
 		)
 		if err != nil {
 			return fmt.Errorf("error creating room: %w", err)
