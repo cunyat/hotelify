@@ -1,0 +1,81 @@
+openapi: '3.0.2'
+info:
+  title: Hotelify Rooms API
+  version: '1.0'
+
+servers:
+  - url: http://{hostname}/api
+    variables:
+      hostname:
+        default: localhost:9050
+
+paths:
+  /rooms:
+    # get:
+    #   responses:
+    #     '200':
+    #       description: OK
+    post:
+      operationId: createRoom
+      requestBody: 
+        description: 'Room details'
+        required: true
+
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/postRoom'
+      responses:
+        '204':
+          description: object will be created
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+      postRoom:
+        type: object
+        required: ['num', 'floor']
+        properties:
+          num: 
+            type: string
+          floor:
+            type: integer
+          services:
+            type: array
+            items:
+              type: string
+          beds:
+            type: array
+            items:
+              type: object
+              properties:
+                bedType: 
+                  type: string
+                  enum: ['single-bed', 'sofa-bed', 'rollaway-bed', 'double-bed', 'queen-bed']
+                count:
+                  type: integer
+      Error:
+        type: object
+        required:
+          - slug
+          - message
+        properties:
+          slug:
+            type: string
+          message:
+            type: string
+
+  
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

@@ -31,7 +31,7 @@ func RoomCommandHandler(repo room.Repository) domain.CommandHandler {
 			return errors.New("unknown command")
 		}
 
-		var beds = make([]room.RoomBed, len(createCmd.Beds))
+		var beds []room.RoomBed
 
 		for key, count := range createCmd.Beds {
 			bedType, err := room.NewBedTypeFromString(key)

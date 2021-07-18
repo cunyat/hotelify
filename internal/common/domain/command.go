@@ -1,6 +1,9 @@
 package domain
 
-import "context"
+import (
+	"context"
+	"errors"
+)
 
 type CommandType string
 
@@ -16,3 +19,5 @@ type CommandBus interface {
 	// Dispatch is the method used to dispatch new commands.
 	Dispatch(context.Context, Command) error
 }
+
+var ErrCommandNotRegistered = errors.New("command not registered")
