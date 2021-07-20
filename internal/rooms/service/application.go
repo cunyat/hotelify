@@ -9,6 +9,10 @@ import (
 	"github.com/cunyat/hotelify/internal/rooms/app/create"
 )
 
+func NewApplication(ctx context.Context) app.Application {
+	return newApplication(ctx)
+}
+
 func newApplication(ctx context.Context) app.Application {
 	cbus := command.NewInMemoryCommandBus()
 	repo := storage.NewInMemoryRoomRepository()

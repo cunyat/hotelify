@@ -11,10 +11,6 @@ servers:
 
 paths:
   /rooms:
-    # get:
-    #   responses:
-    #     '200':
-    #       description: OK
     post:
       operationId: createRoom
       requestBody: 

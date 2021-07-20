@@ -1,52 +1,76 @@
 package ports
 
 import (
-	"fmt"
+	"context"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
-	"github.com/cunyat/hotelify/internal/common/domain"
-	"github.com/cunyat/hotelify/internal/rooms/app/create"
-	"github.com/go-chi/render"
-	"github.com/google/uuid"
+	"github.com/cunyat/hotelify/internal/rooms/app"
+	"github.com/cunyat/hotelify/internal/rooms/ports/handler"
+	"github.com/gin-gonic/gin"
 )
 
 type HttpServer struct {
-	cBus domain.CommandBus
+	httpAddr string
+	engine   *gin.Engine
+
+	shutdownTimeout time.Duration
+
+	app app.Application
 }
 
-func NewHttpServer(cBus domain.CommandBus) HttpServer {
-	return HttpServer{
-		cBus: cBus,
+func NewHttpServer(ctx context.Context, httpAddr string, app app.Application) (context.Context, HttpServer) {
+	srv := HttpServer{
+		httpAddr: httpAddr,
+		engine:   gin.New(),
+
+		shutdownTimeout: 15 * time.Second,
+
+		app: app,
 	}
+
+	srv.registerRoutes()
+	return serverContext(ctx), srv
 }
 
-func (s HttpServer) CreateRoom(w http.ResponseWriter, r *http.Request) {
-	postRoom := PostRoom{}
+func (s *HttpServer) registerRoutes() {
+	s.engine.Use(gin.Recovery(), gin.Logger())
 
-	if err := render.Decode(r, &postRoom); err != nil {
-		w.Write([]byte(fmt.Sprintf("{'slug': 'bad-request', 'message': %s}", err.Error())))
-		return
+	s.engine.POST("/rooms", handler.CreateRoomHandler(s.app.CommandBus))
+}
+
+func (s *HttpServer) Run(ctx context.Context) error {
+	log.Println("Server running on ", s.httpAddr)
+
+	srv := &http.Server{
+		Addr:    s.httpAddr,
+		Handler: s.engine,
 	}
 
-	beds := make(map[string]int)
-	for _, bed := range *postRoom.Beds {
-		bedType := string(*bed.BedType)
-		beds[bedType] = *bed.Count
-	}
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatal("server shut down", err)
+		}
+	}()
 
-	cmd := create.RoomCommand{
-		UUID:     uuid.NewString(),
-		Num:      postRoom.Num,
-		Floor:    postRoom.Floor,
-		Beds:     beds,
-		Services: *postRoom.Services,
-	}
+	<-ctx.Done()
+	ctxShutDown, cancel := context.WithTimeout(context.Background(), s.shutdownTimeout)
+	defer cancel()
 
-	if err := s.cBus.Dispatch(r.Context(), cmd); err != nil {
-		w.Write([]byte(fmt.Sprintf("{'slug': 'unexpected-error', 'message': %s}", err.Error())))
-		return
-	}
+	return srv.Shutdown(ctxShutDown)
+}
 
-	w.Header().Set("content-location", "/rooms/"+cmd.UUID)
-	w.WriteHeader(http.StatusCreated)
+func serverContext(ctx context.Context) context.Context {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	ctx, cancel := context.WithCancel(ctx)
+	go func() {
+		<-c
+		cancel()
+	}()
+
+	return ctx
 }

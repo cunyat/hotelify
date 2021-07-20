@@ -1,30 +1,19 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"context"
+	"log"
 
-	"github.com/cunyat/hotelify/internal/rooms/adapters/command"
-	"github.com/cunyat/hotelify/internal/rooms/adapters/storage"
-	"github.com/cunyat/hotelify/internal/rooms/app/create"
 	"github.com/cunyat/hotelify/internal/rooms/ports"
-	"github.com/go-chi/chi/v5"
+	"github.com/cunyat/hotelify/internal/rooms/service"
 )
 
 func main() {
-	cbus := command.NewInMemoryCommandBus()
-	repo := storage.NewInMemoryRoomRepository()
-	createRoom := create.RoomCommandHandler(repo)
+	app := service.NewApplication(context.TODO())
 
-	cbus.Register(create.RoomCommand{}.CommandName(), createRoom)
+	ctx, srv := ports.NewHttpServer(context.TODO(), ":9051", app)
 
-	router := chi.NewRouter()
-
-	rootRouter := chi.NewRouter()
-	// we are mounting all APIs under /api path
-	handler := ports.HandlerFromMux(ports.NewHttpServer(&cbus), router)
-	rootRouter.Mount("/api", handler)
-
-	fmt.Println("Running")
-	http.ListenAndServe(":9050", rootRouter)
+	if err := srv.Run(ctx); err != nil {
+		log.Fatal(err)
+	}
 }
