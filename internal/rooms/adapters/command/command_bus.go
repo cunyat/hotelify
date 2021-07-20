@@ -12,8 +12,8 @@ type InMemoryCommandBus struct {
 
 var _ domain.CommandBus = (*InMemoryCommandBus)(nil)
 
-func NewInMemoryCommandBus() InMemoryCommandBus {
-	return InMemoryCommandBus{
+func NewInMemoryCommandBus() *InMemoryCommandBus {
+	return &InMemoryCommandBus{
 		handlers: make(map[domain.CommandType]domain.CommandHandler),
 	}
 }

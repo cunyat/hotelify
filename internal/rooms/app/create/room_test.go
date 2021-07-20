@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/cunyat/hotelify/internal/rooms/adapters/storagemocks"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -17,6 +18,7 @@ func TestCreateRoomCommand_Saved(t *testing.T) {
 	repo.On("Save", mock.Anything, mock.Anything).Once().Return(nil)
 
 	cmd := RoomCommand{
+		UUID:     uuid.NewString(),
 		Num:      "123",
 		Floor:    1,
 		Beds:     map[string]int{"double-bed": 2},
@@ -36,6 +38,7 @@ func TestCreateRoomCommand_RepositoryError(t *testing.T) {
 	repo.On("Save", mock.Anything, mock.Anything).Once().Return(errors.New("error in repository"))
 
 	cmd := RoomCommand{
+		UUID:     uuid.NewString(),
 		Num:      "123",
 		Floor:    1,
 		Beds:     map[string]int{"double-bed": 2},
@@ -55,6 +58,7 @@ func TestCreateRoomCommand_BadBedType(t *testing.T) {
 	repo := new(storagemocks.Repository)
 
 	cmd := RoomCommand{
+		UUID:     uuid.NewString(),
 		Num:      "123",
 		Floor:    1,
 		Beds:     map[string]int{"bad-bed": 2},

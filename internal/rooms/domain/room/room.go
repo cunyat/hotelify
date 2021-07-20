@@ -30,9 +30,13 @@ func NewRoom(uuid string, num string, floor int, beds []RoomBed, services []stri
 	}, nil
 }
 
-func CreateRoom(num string, floor int, beds []RoomBed, services []string) (Room, error) {
-	uuid := uuidgen.NewString()
-	room, err := NewRoom(uuid, num, floor, beds, services)
+func CreateRoom(uuid string, num string, floor int, beds map[string]int, services []string) (Room, error) {
+	roomBeds, err := parseRoomBeds(beds)
+	if err != nil {
+		return Room{}, err
+	}
+
+	room, err := NewRoom(uuid, num, floor, roomBeds, services)
 	if err != nil {
 		return Room{}, err
 	}

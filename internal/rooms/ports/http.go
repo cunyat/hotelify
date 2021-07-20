@@ -7,6 +7,7 @@ import (
 	"github.com/cunyat/hotelify/internal/common/domain"
 	"github.com/cunyat/hotelify/internal/rooms/app/create"
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 )
 
 type HttpServer struct {
@@ -34,6 +35,7 @@ func (s HttpServer) CreateRoom(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cmd := create.RoomCommand{
+		UUID:     uuid.NewString(),
 		Num:      postRoom.Num,
 		Floor:    postRoom.Floor,
 		Beds:     beds,
@@ -45,5 +47,6 @@ func (s HttpServer) CreateRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("content-location", "/rooms/"+cmd.UUID)
 	w.WriteHeader(http.StatusCreated)
 }

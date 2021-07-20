@@ -17,6 +17,8 @@ const (
 	QueenBed
 )
 
+var ErrInvalidBedType = errors.New("invalid bed type")
+
 func NewBedTypeFromString(value string) (bedType, error) {
 	switch value {
 	case "single-bed":
@@ -30,8 +32,7 @@ func NewBedTypeFromString(value string) (bedType, error) {
 	case "queen-bed":
 		return QueenBed, nil
 	default:
-		return 0, errors.New("unkown bed type")
-
+		return 0, ErrInvalidBedType
 	}
 }
 
@@ -45,6 +46,22 @@ func NewRoomBed(bedType bedType, count int) RoomBed {
 		bedType: bedType,
 		count:   count,
 	}
+}
+
+func parseRoomBeds(beds map[string]int) ([]RoomBed, error) {
+	var roomBeds []RoomBed
+
+	for key, count := range beds {
+		bedType, err := NewBedTypeFromString(key)
+		if err != nil {
+			return nil, err
+		}
+
+		bed := NewRoomBed(bedType, count)
+		roomBeds = append(roomBeds, bed)
+	}
+
+	return roomBeds, nil
 }
 
 func (b RoomBed) Capacity() int {
