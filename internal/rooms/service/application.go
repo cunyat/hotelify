@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/cunyat/hotelify/internal/rooms/adapters/command"
-	"github.com/cunyat/hotelify/internal/rooms/adapters/query"
+	"github.com/cunyat/hotelify/internal/common/adapters/command"
+	"github.com/cunyat/hotelify/internal/common/adapters/query"
 	"github.com/cunyat/hotelify/internal/rooms/adapters/storage"
 	"github.com/cunyat/hotelify/internal/rooms/app"
 	"github.com/cunyat/hotelify/internal/rooms/app/create"
