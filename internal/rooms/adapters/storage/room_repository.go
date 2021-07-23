@@ -31,3 +31,12 @@ func (r *InMemoryRoomRepository) Save(ctx context.Context, entity room.Room) err
 	fmt.Printf("New room: %v", entity)
 	return nil
 }
+
+func (r *InMemoryRoomRepository) Get(ctx context.Context, uuid string) (room.Room, error) {
+	entity, ok := r.rooms[uuid]
+	if !ok {
+		return room.Room{}, room.ErrRoomNotFound
+	}
+
+	return entity, nil
+}

@@ -1,6 +1,9 @@
 package domain
 
-import "context"
+import (
+	"context"
+	"errors"
+)
 
 type QueryType string
 
@@ -18,3 +21,7 @@ type QueryBus interface {
 	// Ask is the method used to ask a new Query and obtain the response
 	Ask(context.Context, Query) (Response, error)
 }
+
+var (
+	ErrQueryNotRegistered = errors.New("query is not registered")
+)

@@ -10,9 +10,7 @@ import (
 
 func main() {
 	app := service.NewApplication(context.TODO())
-
 	ctx, srv := ports.NewHttpServer(context.TODO(), ":9051", app)
-
 	if err := srv.Run(ctx); err != nil {
 		log.Fatal(err)
 	}

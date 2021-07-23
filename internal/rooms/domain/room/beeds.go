@@ -91,3 +91,11 @@ func (b RoomBed) String() string {
 		return ""
 	}
 }
+
+func (b RoomBed) Type() bedType {
+	return b.bedType
+}
+
+func (b RoomBed) Count() int {
+	return b.count
+}

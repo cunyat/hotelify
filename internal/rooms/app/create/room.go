@@ -17,10 +17,10 @@ type RoomCommand struct {
 	Services []string
 }
 
-const commandType domain.CommandType = "rooms.room.create"
+const RoomCommandType domain.CommandType = "rooms.room.create"
 
 func (c RoomCommand) CommandName() domain.CommandType {
-	return commandType
+	return RoomCommandType
 }
 
 var _ domain.Command = (*RoomCommand)(nil)
