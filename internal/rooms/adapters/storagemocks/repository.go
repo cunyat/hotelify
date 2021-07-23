@@ -48,19 +48,3 @@ func (_m *Repository) Save(_a0 context.Context, _a1 room.Room) error {
 
 	return r0
 }
-
-// Search provides a mock function with given fields: _a0
-func (_m *Repository) Search(_a0 context.Context) []room.Room {
-	ret := _m.Called(_a0)
-
-	var r0 []room.Room
-	if rf, ok := ret.Get(0).(func(context.Context) []room.Room); ok {
-		r0 = rf(_a0)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]room.Room)
-		}
-	}
-
-	return r0
-}
