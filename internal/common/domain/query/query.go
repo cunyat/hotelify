@@ -1,23 +1,23 @@
-package domain
+package query
 
 import (
 	"context"
 	"errors"
 )
 
-type QueryType string
+type Type string
 
 type Query interface {
-	QueryName() QueryType
+	QueryName() Type
 }
 
 type Response interface{}
 
-type QueryHandler func(context.Context, Query) (Response, error)
+type Handler func(context.Context, Query) (Response, error)
 
-type QueryBus interface {
+type Bus interface {
 	// Register is the method used to register a new QueryHandler
-	Register(QueryType, QueryHandler)
+	Register(Type, Handler)
 	// Ask is the method used to ask a new Query and obtain the response
 	Ask(context.Context, Query) (Response, error)
 }

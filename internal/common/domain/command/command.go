@@ -1,21 +1,21 @@
-package domain
+package command
 
 import (
 	"context"
 	"errors"
 )
 
-type CommandType string
+type Type string
 
 type Command interface {
-	CommandName() CommandType
+	CommandName() Type
 }
 
-type CommandHandler func(context.Context, Command) error
+type Handler func(context.Context, Command) error
 
-type CommandBus interface {
+type Bus interface {
 	// Register is the method used to register a new command handler.
-	Register(CommandType, CommandHandler)
+	Register(Type, Handler)
 	// Dispatch is the method used to dispatch new commands.
 	Dispatch(context.Context, Command) error
 }

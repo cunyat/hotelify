@@ -3,12 +3,12 @@ package handler
 import (
 	"net/http"
 
-	"github.com/cunyat/hotelify/internal/common/domain"
+	"github.com/cunyat/hotelify/internal/common/domain/query"
 	"github.com/cunyat/hotelify/internal/rooms/app/get"
 	"github.com/gin-gonic/gin"
 )
 
-func GetRoomHandler(qbus domain.QueryBus) gin.HandlerFunc {
+func GetRoomHandler(qbus query.Bus) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		uuid, ok := ctx.Params.Get("uuid")
 		if !ok {

@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/cunyat/hotelify/internal/common/domain"
+	"github.com/cunyat/hotelify/internal/common/domain/command"
 	"github.com/cunyat/hotelify/internal/rooms/app/create"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -19,7 +19,7 @@ type createRoomRequest struct {
 	} `json:"beds"`
 }
 
-func CreateRoomHandler(cbus domain.CommandBus) gin.HandlerFunc {
+func CreateRoomHandler(cbus command.Bus) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req createRoomRequest
 		if err := ctx.BindJSON(&req); err != nil {

@@ -1,9 +1,13 @@
 package app
 
-import "github.com/cunyat/hotelify/internal/common/domain"
+import (
+	"github.com/cunyat/hotelify/internal/common/domain/command"
+	"github.com/cunyat/hotelify/internal/common/domain/event"
+	"github.com/cunyat/hotelify/internal/common/domain/query"
+)
 
 type Application struct {
-	CommandBus domain.CommandBus
-	QueryBus   domain.QueryBus
-	EventBus   domain.EventBus
+	CommandBus command.Bus
+	QueryBus   query.Bus
+	EventBus   event.Bus
 }

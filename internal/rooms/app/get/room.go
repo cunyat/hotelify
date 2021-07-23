@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/cunyat/hotelify/internal/common/domain"
+	"github.com/cunyat/hotelify/internal/common/domain/query"
 	"github.com/cunyat/hotelify/internal/rooms/domain/room"
 )
 
@@ -25,16 +25,16 @@ type BedResponse struct {
 	Count   int    `json:"count"`
 }
 
-const RoomQueryType domain.QueryType = "rooms.room.get"
+const RoomQueryType query.Type = "rooms.room.get"
 
-func (q RoomQuery) QueryName() domain.QueryType {
+func (q RoomQuery) QueryName() query.Type {
 	return RoomQueryType
 }
 
-var _ domain.Query = (*RoomQuery)(nil)
+var _ query.Query = (*RoomQuery)(nil)
 
-func RoomQueryHandler(repo room.Repository) domain.QueryHandler {
-	return func(ctx context.Context, baseQuery domain.Query) (domain.Response, error) {
+func RoomQueryHandler(repo room.Repository) query.Handler {
+	return func(ctx context.Context, baseQuery query.Query) (query.Response, error) {
 		query, ok := baseQuery.(RoomQuery)
 		if !ok {
 			return RoomQueryResponse{}, errors.New("unknown query")

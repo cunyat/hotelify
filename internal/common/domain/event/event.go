@@ -1,4 +1,4 @@
-package domain
+package event
 
 import (
 	"context"
@@ -7,19 +7,19 @@ import (
 	"github.com/google/uuid"
 )
 
-type EventType string
+type Type string
 
 type Event interface {
 	UUID() string
 	AggregateUUID() string
 	OccurredOn() time.Time
-	EventType() EventType
+	EventType() Type
 }
 
 type EventListener func(context.Context, Event) error
 
-type EventBus interface {
-	Subscribe(EventType, EventListener)
+type Bus interface {
+	Subscribe(Type, EventListener)
 	Publish(context.Context, Event) error
 }
 

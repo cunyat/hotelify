@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/cunyat/hotelify/internal/common/domain"
+	"github.com/cunyat/hotelify/internal/common/domain/command"
 	"github.com/cunyat/hotelify/internal/rooms/domain/room"
 )
 
@@ -17,16 +17,16 @@ type RoomCommand struct {
 	Services []string
 }
 
-const RoomCommandType domain.CommandType = "rooms.room.create"
+const RoomCommandType command.Type = "rooms.room.create"
 
-func (c RoomCommand) CommandName() domain.CommandType {
+func (c RoomCommand) CommandName() command.Type {
 	return RoomCommandType
 }
 
-var _ domain.Command = (*RoomCommand)(nil)
+var _ command.Command = (*RoomCommand)(nil)
 
-func RoomCommandHandler(repo room.Repository) domain.CommandHandler {
-	return func(ctx context.Context, cmd domain.Command) error {
+func RoomCommandHandler(repo room.Repository) command.Handler {
+	return func(ctx context.Context, cmd command.Command) error {
 		createCmd, ok := cmd.(RoomCommand)
 		if !ok {
 			return errors.New("unknown command")
