@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+    rooms-api:
+        build:
+            context: docker
+            dockerfile: Dockerfile
+        volumes:
+            - ./internal:/internal
+        working_dir: /internal/rooms
+        ports:
+            - "9051:8080"
+        env_file:
+            .env
+
+
+    # mysql:
+    #     image: mysql:8
+    #     env_file:
+    #         - .env
+    #     volumes:
+    #         - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    #     ports:
+    #         - "3306:3306"
+    #     restart: unless-stopped
+    #     environment:
+    #         MYSQL_USER: hotelify
+    #         MYSQL_PASSWORD: hotelify
+    #         MYSQL_ROOT_PASSWORD: password
+         

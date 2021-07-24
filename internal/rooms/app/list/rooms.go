@@ -1,8 +1,9 @@
-package get
+package list
 
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/cunyat/hotelify/internal/common/domain/query"
 	"github.com/cunyat/hotelify/internal/rooms/app/response"
@@ -10,10 +11,9 @@ import (
 )
 
 type RoomQuery struct {
-	UUID string
 }
 
-const RoomQueryType query.Type = "rooms.room.get"
+const RoomQueryType query.Type = "rooms.room.list"
 
 func (q RoomQuery) QueryName() query.Type {
 	return RoomQueryType
@@ -23,16 +23,16 @@ var _ query.Query = (*RoomQuery)(nil)
 
 func RoomQueryHandler(repo room.Repository) query.Handler {
 	return func(ctx context.Context, baseQuery query.Query) (query.Response, error) {
-		qry, ok := baseQuery.(RoomQuery)
+		_, ok := baseQuery.(RoomQuery)
 		if !ok {
-			return response.Room{}, errors.New("unknown query")
+			return response.Rooms{}, errors.New("unknown query")
 		}
 
-		room, err := repo.Get(ctx, qry.UUID)
+		rooms, err := repo.List(ctx)
 		if err != nil {
-			return response.Room{}, err
+			return response.Rooms{}, fmt.Errorf("eror listing rooms: %w", err)
 		}
 
-		return response.FromDomain(room), nil
+		return response.RoomsFromDomain(rooms), nil
 	}
 }

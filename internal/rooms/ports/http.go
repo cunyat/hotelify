@@ -39,8 +39,9 @@ func NewHttpServer(ctx context.Context, httpAddr string, app app.Application) (c
 func (s *HttpServer) registerRoutes() {
 	s.engine.Use(gin.Recovery(), gin.Logger())
 
-	s.engine.GET("/rooms/:uuid", handler.GetRoomHandler(s.app.QueryBus))
+	s.engine.GET("/rooms", handler.ListRoomsHandler(s.app.QueryBus))
 	s.engine.POST("/rooms", handler.CreateRoomHandler(s.app.CommandBus))
+	s.engine.GET("/rooms/:uuid", handler.GetRoomHandler(s.app.QueryBus))
 }
 
 func (s *HttpServer) Run(ctx context.Context) error {

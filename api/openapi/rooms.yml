@@ -4,12 +4,29 @@ info:
   version: '1.0'
 
 servers:
-  - url: http://{hostname}/api
+  - url: http://{hostname}
     variables:
       hostname:
-        default: localhost:9050
+        default: localhost:9051
 
 paths:
+  /rooms/{uuid}:
+    get:
+      operationId: getRoom
+      parameters:
+        - in: path
+          name: uuid
+          schema: 
+            type: string
+          required: true
+          description: Unique uuid of the room
+      responses:
+        '200':
+          description: Room found and returned
+          content:
+            application/json:
+              schema:
+               $ref: "#/components/schemas/room"
   /rooms:
     post:
       operationId: createRoom
@@ -33,6 +50,29 @@ paths:
 
 components:
   schemas:
+      room:
+        type: object
+        properties:
+          uuid:
+            type: string
+          num: 
+            type: string
+          floor:
+            type: integer
+          services:
+            type: array
+            items:
+              type: string
+          beds:
+            type: array
+            items:
+              type: object
+              properties:
+                bedType: 
+                  type: string
+                  enum: ['single-bed', 'sofa-bed', 'rollaway-bed', 'double-bed', 'queen-bed']
+                count:
+                  type: integer
       postRoom:
         type: object
         required: ['num', 'floor']

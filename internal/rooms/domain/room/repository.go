@@ -12,4 +12,5 @@ var (
 type Repository interface {
 	Get(context.Context, string) (Room, error)
 	Save(context.Context, Room) error
+	List(context.Context) ([]Room, error)
 }
