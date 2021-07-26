@@ -43,11 +43,9 @@ func (r *RoomRepository) Save(ctx context.Context, entity room.Room) error {
 		return fmt.Errorf("could not insert room: %w", err)
 	}
 
-	for _, bed := range beds {
-		_, err = r.db.ExecContext(ctx, "insert into beds (room_uuid, bed_type, count) values (?, ?, ?)", bed.RoomUUID, bed.BedType, bed.Count)
-		if err != nil {
-			return fmt.Errorf("could not insert bed: %w", err)
-		}
+	err = r.insertBeds(ctx, beds)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -93,6 +91,38 @@ func (r *RoomRepository) List(ctx context.Context) ([]room.Room, error) {
 	}
 
 	return entities, nil
+}
+
+func (r *RoomRepository) Update(ctx context.Context, entity room.Room) error {
+	rm, beds := domainToSQL(entity)
+
+	_, err := r.db.ExecContext(ctx, "delete from beds where room_uuid = ?", rm.UUID)
+	if err != nil {
+		return fmt.Errorf("error removing previous beds %w", err)
+	}
+
+	err = r.insertBeds(ctx, beds)
+	if err != nil {
+		return fmt.Errorf("error updating beds %w", err)
+	}
+
+	_, err = r.db.ExecContext(ctx, "update rooms set num = ?, floor = ?, services = ? where uuid = ?", rm.Num, rm.Floor, rm.Services, rm.UUID)
+	if err != nil {
+		return fmt.Errorf("error updating room: %w", err)
+	}
+
+	return nil
+}
+
+func (r *RoomRepository) insertBeds(ctx context.Context, beds []sqlBed) error {
+	for _, bed := range beds {
+		_, err := r.db.ExecContext(ctx, "insert into beds (room_uuid, bed_type, count) values (?, ?, ?)", bed.RoomUUID, bed.BedType, bed.Count)
+		if err != nil {
+			return fmt.Errorf("could not insert bed: %w", err)
+		}
+	}
+
+	return nil
 }
 
 func sqlToDomain(r sqlRoom, bb []sqlBed) (room.Room, error) {
@@ -165,4 +195,9 @@ func (r *InMemoryRoomRepository) List(ctx context.Context) ([]room.Room, error) 
 	}
 
 	return rooms, nil
+}
+
+func (r *InMemoryRoomRepository) Update(ctx context.Context, entity room.Room) error {
+	r.rooms[entity.UUID()] = entity
+	return nil
 }
