@@ -13,10 +13,7 @@ type createRoomRequest struct {
 	Num      string   `json:"num"`
 	Floor    int      `json:"floor"`
 	Services []string `json:"services"`
-	Beds     []struct {
-		BedType string `json:"bedType"`
-		Count   int    `json:"count"`
-	} `json:"beds"`
+	Capacity int      `json:"capacity"`
 }
 
 func CreateRoomHandler(cbus command.Bus) gin.HandlerFunc {
@@ -27,18 +24,12 @@ func CreateRoomHandler(cbus command.Bus) gin.HandlerFunc {
 			return
 		}
 
-		beds := make(map[string]int)
-		for _, bed := range req.Beds {
-			bedType := string(bed.BedType)
-			beds[bedType] = bed.Count
-		}
-
 		cmd := create.RoomCommand{
 			UUID:     uuid.NewString(),
 			Num:      req.Num,
 			Floor:    req.Floor,
 			Services: req.Services,
-			Beds:     beds,
+			Capacity: req.Capacity,
 		}
 
 		err := cbus.Dispatch(ctx, cmd)

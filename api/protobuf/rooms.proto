@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package rooms;
+
+service RoomService  {
+  rpc GetRoom(GetRoomRequest) returns (GetRoomResponse, error) {}
+  rpc ListRooms() returns (ListRoomsResponse) {}
+}
+
+message GetRoomRequest {
+  string uuid = 1;
+}
+
+message GetRoomResponse {
+  string uuid = 1;
+  string num = 2;
+  int32 floor = 3;
+  int32 capacity = 4;
+  repeated string services = 5;
+}
+
+message ListRoomsResponse {
+  repeated GetRoomResponse rooms = 1;
+}

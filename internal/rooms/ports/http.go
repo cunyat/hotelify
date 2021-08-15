@@ -42,6 +42,7 @@ func (s *HttpServer) registerRoutes() {
 	s.engine.GET("/rooms", handler.ListRoomsHandler(s.app.QueryBus))
 	s.engine.POST("/rooms", handler.CreateRoomHandler(s.app.CommandBus))
 	s.engine.GET("/rooms/:uuid", handler.GetRoomHandler(s.app.QueryBus))
+	s.engine.DELETE("/rooms/:uuid", handler.RemoveRoomHandler(s.app.CommandBus))
 }
 
 func (s *HttpServer) Run(ctx context.Context) error {

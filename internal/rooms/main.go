@@ -15,6 +15,7 @@ func main() {
 	if !ok {
 		port = "8080"
 	}
+
 	ctx, srv := ports.NewHttpServer(context.TODO(), port, app)
 	if err := srv.Run(ctx); err != nil {
 		log.Fatal(err)

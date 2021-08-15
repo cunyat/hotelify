@@ -21,7 +21,7 @@ func TestCreateRoomCommand_Saved(t *testing.T) {
 		UUID:     uuid.NewString(),
 		Num:      "123",
 		Floor:    1,
-		Beds:     map[string]int{"double-bed": 2},
+		Capacity: 2,
 		Services: []string{"tv"},
 	}
 
@@ -41,7 +41,7 @@ func TestCreateRoomCommand_RepositoryError(t *testing.T) {
 		UUID:     uuid.NewString(),
 		Num:      "123",
 		Floor:    1,
-		Beds:     map[string]int{"double-bed": 2},
+		Capacity: 2,
 		Services: []string{"tv"},
 	}
 
@@ -51,23 +51,5 @@ func TestCreateRoomCommand_RepositoryError(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "repository")
 	assert.Contains(t, err.Error(), "saving")
-	repo.AssertExpectations(t)
-}
-
-func TestCreateRoomCommand_BadBedType(t *testing.T) {
-	repo := new(storagemocks.Repository)
-
-	cmd := RoomCommand{
-		UUID:     uuid.NewString(),
-		Num:      "123",
-		Floor:    1,
-		Beds:     map[string]int{"bad-bed": 2},
-		Services: []string{"tv"},
-	}
-
-	handler := RoomCommandHandler(repo)
-	err := handler(context.Background(), cmd)
-
-	require.Error(t, err)
 	repo.AssertExpectations(t)
 }

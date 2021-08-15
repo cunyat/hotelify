@@ -1,80 +1,60 @@
 package service
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"os"
-	"time"
 
 	"github.com/cunyat/hotelify/internal/rooms/adapters/storage"
 	"github.com/cunyat/hotelify/internal/rooms/domain/room"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 func NewRoomRepository() room.Repository {
-	// config, err := loadConfig()
-	// if err != nil {
-	//	panic(err.Error())
-	// }
-
-	// dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/rooms", config.user, config.password, config.host, config.port)
-	// db, err := sql.Open("mysql", dsn)
-	db := sqlx.MustOpen("sqlite3", "database.sqlite")
-	_, err := db.Exec(
-		`create table if not exists rooms (
-    uuid varchar(38) not null primary key,
-    num varchar(61) not null,
-    floor integer not null,
-    services varchar(255) not null
-
-) CHARACTER SET utf8mb4
-  COLLATE utf8mb4_bin;
-		
-		create table if not exists beds (
-			id integer not null primary key autoincrement,
-			room_uuid varchar(38) not null,
-			bed_type varchar(32) not null,
-			count int not null
-		) CHARACTER SET utf8mb4
-			COLLATE utf8mb4_bin;
-`)
-	if err == nil {
-		panic(err)
+	config, err := loadConfig()
+	if err != nil {
+		panic(err.Error())
 	}
 
-	// See "Important settings" section.
-	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/rooms", config.user, config.password, config.host, config.port)
+	pool, err := pgxpool.Connect(context.Background(), dsn)
+	if err == nil {
+		panic(err.Error())
+	}
 
-	return storage.NewMysqlRoomRepository(db)
+	return storage.NewMysqlRoomRepository(pool)
 }
 
 func loadConfig() (repoConfig, error) {
-	user, ok := os.LookupEnv("MYSQL_USER")
+	user, ok := os.LookupEnv("POSTGRES_USER")
 	if !ok {
-		return repoConfig{}, errors.New("MYSQL_USER env var not foud")
+		return repoConfig{}, errors.New("POSTGRES_USER env var not foud")
 	}
 
-	passord, ok := os.LookupEnv("MYSQL_PASSWORD")
+	passord, ok := os.LookupEnv("POSTGRES_PASSWORD")
 	if !ok {
-		return repoConfig{}, errors.New("MYSQL_PASSWORD env var not foud")
+		return repoConfig{}, errors.New("POSTGRES_PASSWORD env var not foud")
 	}
 
-	host, ok := os.LookupEnv("MYSQL_HOST")
+	host, ok := os.LookupEnv("POSTGRES_HOST")
 	if !ok {
-		return repoConfig{}, errors.New("MYSQL_HOST env var not foud")
+		return repoConfig{}, errors.New("POSTGRES_HOST env var not foud")
 	}
-	port, ok := os.LookupEnv("MYSQL_PORT")
+	port, ok := os.LookupEnv("POSTGRES_PORT")
 	if !ok {
-		return repoConfig{}, errors.New("MYSQL_PORT env var not foud")
+		return repoConfig{}, errors.New("POSTGRES_PORT env var not foud")
+	}
+	db, ok := os.LookupEnv("POSTGRES_DB")
+	if !ok {
+		return repoConfig{}, errors.New("POSTGRES_DB env var not found")
 	}
 	return repoConfig{
 		user:     user,
 		password: passord,
 		host:     host,
 		port:     port,
+		db:       db,
 	}, nil
 }
 
@@ -83,4 +63,5 @@ type repoConfig struct {
 	password string
 	host     string
 	port     string
+	db       string
 }

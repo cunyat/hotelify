@@ -9,6 +9,7 @@ import (
 	"github.com/cunyat/hotelify/internal/rooms/app/create"
 	"github.com/cunyat/hotelify/internal/rooms/app/get"
 	"github.com/cunyat/hotelify/internal/rooms/app/list"
+	"github.com/cunyat/hotelify/internal/rooms/app/remove"
 )
 
 func NewApplication(ctx context.Context) app.Application {
@@ -22,6 +23,7 @@ func newApplication(ctx context.Context) app.Application {
 
 	// Commands
 	cbus.Register(create.RoomCommandType, create.RoomCommandHandler(repo))
+	cbus.Register(remove.RoomCommandType, remove.RoomCommandHandler(repo))
 
 	// Queries
 	qbus.Register(get.RoomQueryType, get.RoomQueryHandler(repo))

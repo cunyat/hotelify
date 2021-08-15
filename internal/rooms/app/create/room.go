@@ -2,7 +2,6 @@ package create
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/cunyat/hotelify/internal/common/domain/command"
@@ -13,7 +12,7 @@ type RoomCommand struct {
 	UUID     string
 	Num      string
 	Floor    int
-	Beds     map[string]int
+	Capacity int
 	Services []string
 }
 
@@ -26,18 +25,18 @@ func (c RoomCommand) CommandName() command.Type {
 var _ command.Command = (*RoomCommand)(nil)
 
 func RoomCommandHandler(repo room.Repository) command.Handler {
-	return func(ctx context.Context, cmd command.Command) error {
-		createCmd, ok := cmd.(RoomCommand)
+	return func(ctx context.Context, baseCmd command.Command) error {
+		cmd, ok := baseCmd.(RoomCommand)
 		if !ok {
-			return errors.New("unknown command")
+			return fmt.Errorf("unknown command (%s) in create.room.command", baseCmd.CommandName())
 		}
 
 		room, err := room.CreateRoom(
-			createCmd.UUID,
-			createCmd.Num,
-			createCmd.Floor,
-			createCmd.Beds,
-			createCmd.Services,
+			cmd.UUID,
+			cmd.Num,
+			cmd.Floor,
+			cmd.Capacity,
+			cmd.Services,
 		)
 		if err != nil {
 			return fmt.Errorf("error creating room: %w", err)

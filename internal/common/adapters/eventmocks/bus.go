@@ -15,12 +15,19 @@ type Bus struct {
 }
 
 // Publish provides a mock function with given fields: _a0, _a1
-func (_m *Bus) Publish(_a0 context.Context, _a1 event.Event) error {
-	ret := _m.Called(_a0, _a1)
+func (_m *Bus) Publish(_a0 context.Context, _a1 ...event.Event) error {
+	_va := make([]interface{}, len(_a1))
+	for _i := range _a1 {
+		_va[_i] = _a1[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, _a0)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, event.Event) error); ok {
-		r0 = rf(_a0, _a1)
+	if rf, ok := ret.Get(0).(func(context.Context, ...event.Event) error); ok {
+		r0 = rf(_a0, _a1...)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -29,6 +36,6 @@ func (_m *Bus) Publish(_a0 context.Context, _a1 event.Event) error {
 }
 
 // Subscribe provides a mock function with given fields: _a0, _a1
-func (_m *Bus) Subscribe(_a0 event.Type, _a1 event.EventListener) {
+func (_m *Bus) Subscribe(_a0 event.Type, _a1 event.Listener) {
 	_m.Called(_a0, _a1)
 }

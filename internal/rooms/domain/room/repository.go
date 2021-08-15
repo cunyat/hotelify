@@ -14,4 +14,5 @@ type Repository interface {
 	Save(context.Context, Room) error
 	List(context.Context) ([]Room, error)
 	Update(context.Context, Room) error
+	Delete(context.Context, Room) error
 }

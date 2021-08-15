@@ -27,6 +27,8 @@ paths:
             application/json:
               schema:
                $ref: "#/components/schemas/room"
+        '404':
+          description: Room not found
   /rooms:
     post:
       operationId: createRoom
@@ -63,16 +65,10 @@ components:
             type: array
             items:
               type: string
-          beds:
-            type: array
-            items:
-              type: object
-              properties:
-                bedType: 
-                  type: string
-                  enum: ['single-bed', 'sofa-bed', 'rollaway-bed', 'double-bed', 'queen-bed']
-                count:
-                  type: integer
+          capacity:
+            type: integer
+            minimum: 1
+
       postRoom:
         type: object
         required: ['num', 'floor']
@@ -85,16 +81,10 @@ components:
             type: array
             items:
               type: string
-          beds:
-            type: array
-            items:
-              type: object
-              properties:
-                bedType: 
-                  type: string
-                  enum: ['single-bed', 'sofa-bed', 'rollaway-bed', 'double-bed', 'queen-bed']
-                count:
-                  type: integer
+          capacity:
+            type: integer
+            minimum: 1
+
       Error:
         type: object
         required:

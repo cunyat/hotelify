@@ -11,32 +11,31 @@ type Room struct {
 	uuid     string
 	num      string
 	floor    int
-	beds     []RoomBed
+	capacity int
 	services []string
 }
 
 // NewRoom builds and returns a Room entity
-func NewRoom(uuid string, num string, floor int, beds []RoomBed, services []string) (Room, error) {
+func NewRoom(uuid string, num string, floor int, capacity int, services []string) (Room, error) {
 	if uuid == "" {
 		return Room{}, errors.New("empty room uuid")
+	}
+
+	if capacity <= 0 {
+		return Room{}, errors.New("capacity must be a positive integer")
 	}
 
 	return Room{
 		uuid:     uuid,
 		num:      num,
 		floor:    floor,
-		beds:     beds,
+		capacity: capacity,
 		services: services,
 	}, nil
 }
 
-func CreateRoom(uuid string, num string, floor int, beds map[string]int, services []string) (Room, error) {
-	roomBeds, err := parseRoomBeds(beds)
-	if err != nil {
-		return Room{}, err
-	}
-
-	room, err := NewRoom(uuid, num, floor, roomBeds, services)
+func CreateRoom(uuid string, num string, floor int, capacity int, services []string) (Room, error) {
+	room, err := NewRoom(uuid, num, floor, capacity, services)
 	if err != nil {
 		return Room{}, err
 	}
@@ -61,18 +60,7 @@ func (r Room) Floor() int {
 
 // Capacity return room's capacity
 func (r Room) Capacity() int {
-	capacity := 0
-
-	for _, bed := range r.beds {
-		capacity += bed.Capacity() * bed.count
-	}
-
-	return capacity
-}
-
-// Beds return room's beds
-func (r Room) Beds() []RoomBed {
-	return r.beds
+	return r.capacity
 }
 
 // Services return room's services
